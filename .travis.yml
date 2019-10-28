@@ -5,3 +5,15 @@ dotnet: 3.0.100
 script:
  - dotnet restore
  - dotnet msbuild Melody.sln
+deploy:
+ - provider: codedeploy
+   wait_until_deployed: true
+   revision_type: github
+   access_key_id: AKIAJLLHETQR3L2T77HA
+   secret_access_key: &1
+     secure: BWBnru4fTCNO0uqedsJ5N8jSGCuvw4eJAK0oyepQLGKbwiyQbPF/taw8IeWYo1Rpikza7epJR25CeLXtitljyOX0ubjybiEGMVH8BQyaSeonivfNgdsyKiMSXnlV5lwpG4tLKwnqNEbEON6E00/9lJHhEYEnlwU/F3+GaoPk9V+I1X0GUrbuiyeGdmvtXlwJv5uF1K7mBMTtbAwNkoRm/wlWz5KkTdhcpl9y0mx4jzHkTCzsrCnjFWsotS0MJQeJQVpBB3WeW0mcKuwakqiYDZUas+W62va9qQMR3Nbr0l0F83/jHfkjp2tVq+YVZK6zeVAgu+rhULeQHPnLnZAZf2r+2X5OuLfIEUVdPLQkqamPJJheochrj4IPzw75IpYR+hgTdp+0oERJWNsUIpysV6ad62wGh4l1Xdd9TM/1NHiOKid0Y6d2izkbsZ8uKEPgc24GMqnSDd3FLbWvA/66tGqgAyd+uwAqFHN5at/mf9wyw3eCdZ7hC95ZBoKOriOAvANnNkFHke+xrJktGkBIR/ynkKYmv6KpDbivd2GUCpDTykw9+SBwybNldHsMYtgMbKXUrBGbqWD9/1iN2GjHlKfI9JWwDSiDwAdeVIWsGvIMISkCd04+EIJmj4SpiTxQCWEazbTgFEUEDlZXI/ibXo5fMAdO0zpl2yqDfWv2RvU=
+   bucket: "S3 Bucket"
+   key: latest/Melody.zip
+   application: Melody
+   deployment_group: MelodyMusicGroup
+   region: us-east-2
