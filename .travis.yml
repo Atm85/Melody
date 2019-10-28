@@ -3,4 +3,4 @@ solution: Melody.sln
 mono: none
 dotnet: 3.0.100
 script:
- - dotnet restore
+ - dotnet msbuild Melody.sln
