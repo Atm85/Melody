@@ -20,7 +20,7 @@ deploy:
     bucket: melody
     key: latest/Melody.zip
     application: Melody
-    bundle_type: yaml
+    bundle_type: zip
     deployment_group: MelodyMusicGroup
     on: *2
     region: us-east-2
