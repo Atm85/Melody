@@ -18,9 +18,8 @@ deploy:
     access_key_id: "AKIAZKY2NWBZVHEFUXG3"
     secret_access_key: *1
     bucket: melody
-    key: latest/Melody.zip
+    key: appspec.yml
     application: Melody
-    bundle_type: zip
     deployment_group: MelodyMusicGroup
     on: *2
     region: us-east-2
