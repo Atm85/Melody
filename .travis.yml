@@ -14,6 +14,7 @@ deploy:
       branch: master
     bucket: melody
     skip_cleanup: true
+    local_dir: Melody/bin/Debug
     region: us-east-2
   - provider: codedeploy
     wait_until_deployed: true
