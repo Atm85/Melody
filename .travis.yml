@@ -15,7 +15,6 @@ deploy:
     bucket: melody
   - provider: codedeploy
     wait_until_deployed: true
-    revision_type: github
     access_key_id: "AKIAZKY2NWBZVHEFUXG3"
     secret_access_key: *1
     bucket: melody
