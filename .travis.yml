@@ -7,16 +7,16 @@ script:
   - dotnet msbuild Melody.sln
 deploy:
   - provider: s3
-    access_key_id: "AKIAJZ4PYGPOWYHUP4VA"
+    access_key_id: "AKIAZKY2NWBZVHEFUXG3"
     secret_access_key: &1
-      secure: "BWBnru4fTCNO0uqedsJ5N8jSGCuvw4eJAK0oyepQLGKbwiyQbPF/taw8IeWYo1Rpikza7epJR25CeLXtitljyOX0ubjybiEGMVH8BQyaSeonivfNgdsyKiMSXnlV5lwpG4tLKwnqNEbEON6E00/9lJHhEYEnlwU/F3+GaoPk9V+I1X0GUrbuiyeGdmvtXlwJv5uF1K7mBMTtbAwNkoRm/wlWz5KkTdhcpl9y0mx4jzHkTCzsrCnjFWsotS0MJQeJQVpBB3WeW0mcKuwakqiYDZUas+W62va9qQMR3Nbr0l0F83/jHfkjp2tVq+YVZK6zeVAgu+rhULeQHPnLnZAZf2r+2X5OuLfIEUVdPLQkqamPJJheochrj4IPzw75IpYR+hgTdp+0oERJWNsUIpysV6ad62wGh4l1Xdd9TM/1NHiOKid0Y6d2izkbsZ8uKEPgc24GMqnSDd3FLbWvA/66tGqgAyd+uwAqFHN5at/mf9wyw3eCdZ7hC95ZBoKOriOAvANnNkFHke+xrJktGkBIR/ynkKYmv6KpDbivd2GUCpDTykw9+SBwybNldHsMYtgMbKXUrBGbqWD9/1iN2GjHlKfI9JWwDSiDwAdeVIWsGvIMISkCd04+EIJmj4SpiTxQCWEazbTgFEUEDlZXI/ibXo5fMAdO0zpl2yqDfWv2RvU="
+      secure: "lkwTxQpU3h2WvOUoFe3XvhUyzodJeSC3eZrLMf2h+oVUgbAffZLH17Mlyu1hboF+R67AUG7mIofPad0l4RIkXG7+bv6xHyhy616KJAKzjij1VNtwQ4nq/N+/Yy+s4Go4eloXcXxr7C0ZMT8Vts+Hnmiw1bfHybZiheGxSnRta0vcgsPCq9WYO4kt1vnJhnfkQrYJ+j31G4NZQ2wiEBnFKdIgbjFWJmNqkkI3gn4/N8zBpQGJiUL8twASbxhNXtU9HqT7dWOM+AllNvRLlHXp/e5oKgV4aW7swq/jHwvvQuazT+LVl+sgt3fR+ehg6aeju06FtzPfLE/Gil2hiTi3KkaOQuQa++gn4uEhEZcoXR41orDjCPgJ/HEoeURVx83D+Own5wqG242GFee7/cxJhU2rFDLs/232iH44lk9ewC3g7cMfGHIBy/WdIlPJc1pXbPoyxhxWDjPOgYeVNGunbNVmHLIVSdto5+GxMSv9CG09fnFv/UyiAq+1/XfnomqdKAcRr9wAuwXqj7WausRO8W0PRUaUAROo1M7i2KxYeiWODU84K8+wuwAKhTirb602Yv6V05kJoPm11Vuu/rruNi4BteaI7mMd0Lr2newHXt0UqYqNFsom9DwzCWqm7saQLsClErKXReFaImqg60Kzj/9QL7y7RvldFwG11CBJU1Y="
     on: &2
       branch: master
     bucket: melody
   - provider: codedeploy
     wait_until_deployed: true
     revision_type: github
-    access_key_id: "AKIAJZ4PYGPOWYHUP4VA"
+    access_key_id: "AKIAZKY2NWBZVHEFUXG3"
     secret_access_key: *1
     bucket: melody
     key: latest/Melody.zip
