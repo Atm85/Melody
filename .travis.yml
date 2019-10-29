@@ -20,6 +20,7 @@ deploy:
     bucket: melody
     key: appspec.yml
     application: Melody
+    bundle_type: YAML
     deployment_group: MelodyMusicGroup
     on: *2
     region: us-east-2
