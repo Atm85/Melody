@@ -19,7 +19,6 @@ deploy:
     secret_access_key: *1
     bucket: melody
     key: latest/Melody.zip
-    bundle_type: zip
     application: Melody
     deployment_group: MelodyMusicGroup
     on: *2
