@@ -5,6 +5,10 @@ dotnet: 3.0.100
 script:
   - dotnet restore
   - dotnet msbuild Melody.sln
+before_deploy:
+  - cd ..
+  - tar -cvzf Melody.tar.gz Melody/
+  - cd Melody/
 deploy:
   - provider: s3
     access_key_id: "AKIAZKY2NWBZVHEFUXG3"
