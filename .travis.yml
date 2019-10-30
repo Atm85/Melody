@@ -6,8 +6,6 @@ script:
   - dotnet restore
 before_deploy:
   - tar -zcf Melody.tar.gz Melody
-  - mkdir -p bundle
-  - mv Melody.tar.gz bundle
 deploy:
   - provider: s3
     access_key_id: "AKIAZKY2NWBZVHEFUXG3"
