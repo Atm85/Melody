@@ -4,7 +4,8 @@ mono: none
 dotnet: 3.0.100
 script:
   - dotnet restore
-  - dotnet msbuild Melody.sln
+before_deploy:
+  - tar -zcf Melody.tar.gz Melody
 deploy:
   - provider: s3
     access_key_id: "AKIAZKY2NWBZVHEFUXG3"
@@ -14,7 +15,6 @@ deploy:
       branch: master
     bucket: melody
     skip_cleanup: true
-    local_dir: Melody/bin/Debug
     region: us-east-2
   - provider: codedeploy
     wait_until_deployed: true
