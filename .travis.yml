@@ -16,7 +16,7 @@ deploy:
     on: &2
       branch: master
     bucket: melody
-    local_dir: bundle/
+    local_dir: bundle
     region: us-east-2
   - provider: codedeploy
     wait_until_deployed: true
