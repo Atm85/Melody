@@ -7,6 +7,7 @@ script:
   - dotnet msbuild Melody.sln
 before_deploy:
   - chmod 755 Scripts/Zipper.sh
+  - chmod 755 Scripts/Start.sh
   - ./Scripts/Zipper.sh
 deploy:
   - provider: s3
