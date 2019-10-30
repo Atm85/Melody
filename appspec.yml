@@ -6,4 +6,4 @@ files:
 
 hooks:
   ApplicationStart:
-    - location: ./Scripts/Start.sh
+    - location: /Scripts/Start.sh
