@@ -8,6 +8,7 @@ script:
 before_deploy:
   - cd ..
   - tar -cvzf Melody.tar.gz Melody/
+  - mv Melody.tar.gz Melody/
   - cd Melody/
 deploy:
   - provider: s3
