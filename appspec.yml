@@ -3,3 +3,7 @@ os: linux
 files:
   - source: /
     destination: /home/ubuntu
+
+hooks:
+  ApplicationStart:
+    - location: Scripts/Start.sh
