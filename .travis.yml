@@ -6,7 +6,8 @@ script:
   - dotnet restore
   - dotnet msbuild Melody.sln
 before_deploy:
-  - tar -cvzf Melody.tar.gz *
+  - chmod 755 Scripts/Zipper.sh
+  - ./Scripts/Zipper.sh
 deploy:
   - provider: s3
     access_key_id: "AKIAZKY2NWBZVHEFUXG3"
