@@ -8,6 +8,8 @@ script:
 before_deploy:
   - chmod 755 Scripts/Zipper.sh
   - chmod 755 Scripts/Start.sh
+  - chmod 755 Shell_Scripts/Melody_serviceStart.sh
+  - chmod 755 Shell_Scripts/Melody_serviceStop.sh
   - ./Scripts/Zipper.sh
 deploy:
   - provider: s3
