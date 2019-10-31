@@ -6,10 +6,10 @@ files:
 
 hooks:
   ApplicationStop:
-    - location: /Shell_Scripts/Melody_serviceStop.sh
+    - location: Shell_Scripts/Melody_serviceStop.sh
       timeout: 500
       runas: root
   ApplicationStart:
-    - location: /Shell_Scripts/Melody_serviceStart.sh
+    - location: Shell_Scripts/Melody_serviceStart.sh
       timeout: 500
       runas: root
