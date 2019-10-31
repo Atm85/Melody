@@ -93,13 +93,13 @@ namespace Melody.Services
                 return embed.Build();
             }
         }
-        public async Task<Embed> PlaylistAsync(List<string> query, ulong guildId)
+        public async Task PlaylistAsync(List<string> query, ulong guildId, ITextChannel textChannel)
         {
             LavaPlayer player = _lavaSocketClient.GetPlayer(guildId);
             StringBuilder descriptionBuilder = new StringBuilder();
             EmbedBuilder embed = new EmbedBuilder();
 
-            embed.WithTitle($"{query.Count} Tracks added to queue from playlist!");
+            embed.WithTitle($"Adding {query.Count} Tracks to queue from playlist!");
 
             if (!player.IsPlaying)
             {
@@ -108,30 +108,43 @@ namespace Melody.Services
                 await player.PlayAsync(track1);
 
                 int trackPos = 2;
+
+                var message = await textChannel.SendMessageAsync(null, false, embed.Build());
                 foreach (var tracks in query.Skip(1))
                 {
                     SearchResult results = await _lavaRestClient.SearchYouTubeAsync(tracks);
                     LavaTrack track = results.Tracks.FirstOrDefault();
                     descriptionBuilder.Append($"{trackPos}: [{track.Title}]({track.Uri}) - [{track.Length}]\n\n");
                     player.Queue.Enqueue(track);
+
+                    embed.WithDescription($"1: [{track1.Title}]({track1.Uri}) - [{track1.Length}]\n\n{descriptionBuilder.ToString()}");
+                    await message.ModifyAsync(m => {
+                        m.Embed = embed.Build();
+                    });
+
                     trackPos++;
                 }
-                embed.WithDescription($"1: [{track1.Title}]({track1.Uri}) - [{track1.Length}]\n\n{descriptionBuilder.ToString()}");
-                return embed.Build();
             } 
             else
             {
                 int trackPos = 1;
+
+                var message = await textChannel.SendMessageAsync(null, false, embed.Build());
+
                 foreach (var tracks in query)
                 {
                     SearchResult results = await _lavaRestClient.SearchYouTubeAsync(tracks);
                     LavaTrack track = results.Tracks.FirstOrDefault();
                     descriptionBuilder.Append($"{trackPos}: [{track.Title}]({track.Uri}) - [{track.Length}]\n\n");
                     player.Queue.Enqueue(track);
+
+                    embed.WithDescription($"{descriptionBuilder.ToString()}");
+                    await message.ModifyAsync(m => {
+                        m.Embed = embed.Build();
+                    });
+
                     trackPos++;
                 }
-                embed.WithDescription($"{descriptionBuilder.ToString()}");
-                return embed.Build();
             }
         }
         public async Task<Embed> StopAsync(ulong guildId)
