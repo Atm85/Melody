@@ -1,8 +1,6 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using Melody.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Melody.Commands
@@ -22,6 +20,8 @@ namespace Melody.Commands
         {
             ulong userId = Context.Message.Author.Id;
             ulong guildId = Context.Guild.Id;
+            var textChannel = Context.Channel as ITextChannel;
+            await textChannel.TriggerTypingAsync();
             await ReplyAsync(null, false, await _musicService.PlaylistAsync(PlaylistService.GetPlaylist(userId, query), guildId));
         }
     }

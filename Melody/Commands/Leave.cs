@@ -1,10 +1,8 @@
 ﻿using Melody.Services;
 using Discord.Commands;
 using Discord.WebSocket;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
+using Discord;
 
 namespace Melody.Commands
 {
@@ -22,6 +20,8 @@ namespace Melody.Commands
         public async Task LeaveAsync()
         {
             var user = Context.User as SocketGuildUser;
+            var textChannel = Context.Channel as ITextChannel;
+            await textChannel.TriggerTypingAsync();
             await ReplyAsync(null, false, await _musicService.LeaveAsync(user.VoiceChannel, Context.Guild.Id));
         }
     }

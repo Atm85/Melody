@@ -1,12 +1,8 @@
 ﻿using Melody.Services;
 using Discord.Commands;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using Discord;
-using System.Linq;
 
 namespace Melody.Commands
 {
@@ -30,11 +26,15 @@ namespace Melody.Commands
             var textChannel = Context.Channel as ITextChannel;
             if (user.VoiceChannel == null)
             {
+                await textChannel.TriggerTypingAsync();
                 await ReplyAsync(null, false, await _musicService.ConnectAsync(user.VoiceChannel, textChannel));
             }
             else
             {
+                await textChannel.TriggerTypingAsync();
                 await ReplyAsync(null, false, await _musicService.ConnectAsync(user.VoiceChannel, textChannel));
+
+                await textChannel.TriggerTypingAsync();
                 await ReplyAsync(null, false, await _musicService.PlayAsync(query, Context.Guild.Id));
             }
         }

@@ -1,10 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Melody.Services;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Melody.Commands
@@ -18,6 +15,10 @@ namespace Melody.Commands
 
             string[] args = Context.Message.Content.Split(" ");
             ulong userId = Context.Message.Author.Id;
+
+            var textChannel = Context.Channel as ITextChannel;
+            await textChannel.TriggerTypingAsync();
+
             var embed = new EmbedBuilder();
 
             switch (args[1])

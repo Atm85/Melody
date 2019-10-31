@@ -2,10 +2,8 @@
 using Discord.Commands;
 using Melody.Services;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Melody.Commands
@@ -26,6 +24,9 @@ namespace Melody.Commands
         [Alias("rp")]
         public async Task RepeatAsync()
         {
+            var textChannel = Context.Channel as ITextChannel;
+            await textChannel.TriggerTypingAsync();
+
             var embed = new EmbedBuilder();
             string jsonString = File.ReadAllText(path + "/" + file);
             var dictionary = JsonConvert.DeserializeObject<Dictionary<ulong, Dictionary<string, bool>>>(jsonString);
