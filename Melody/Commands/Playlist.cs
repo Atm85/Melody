@@ -22,7 +22,7 @@ namespace Melody.Commands
             ulong guildId = Context.Guild.Id;
             var textChannel = Context.Channel as ITextChannel;
             await textChannel.TriggerTypingAsync();
-            await ReplyAsync(null, false, await _musicService.PlaylistAsync(PlaylistService.GetPlaylist(userId, query), guildId));
+            await _musicService.PlaylistAsync(PlaylistService.GetPlaylist(userId, query), guildId, textChannel);
         }
     }
 }
