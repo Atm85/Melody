@@ -21,7 +21,7 @@ namespace Melody.Commands
         {
             var textChannel = Context.Channel as ITextChannel;
             await textChannel.TriggerTypingAsync();
-            await ReplyAsync(null, false, await _musicService.QueueAsync(Context.Guild.Id));
+            await _musicService.QueueAsync(Context.Guild.Id, textChannel);
         }
     }
 }
