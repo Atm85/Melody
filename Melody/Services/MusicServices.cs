@@ -1,12 +1,15 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Victoria;
 using Victoria.Entities;
+using Victoria.Queue;
 
 namespace Melody.Services
 {
@@ -27,9 +30,50 @@ namespace Melody.Services
         public Task InitializeAsync()
         {
             _client.Ready += ClientReadyAsync;
+            _client.ReactionAdded += OnReactionAdd;
             _lavaSocketClient.Log += LogAsync;
             _lavaSocketClient.OnTrackFinished += OnTrackFinished;
             return Task.CompletedTask;
+        }
+
+        private async Task OnReactionAdd(Cacheable<IUserMessage, ulong> cache, ISocketMessageChannel channel, SocketReaction sReaction)
+        {
+            IUserMessage message = await cache.GetOrDownloadAsync();
+            ITextChannel textChannel = (ITextChannel) channel;
+
+            var player = _lavaSocketClient.GetPlayer(textChannel.Guild.Id);
+            foreach (Embed embed in message.Embeds)
+            {
+                string[] key = embed.Title.Split(" ");
+
+                if (sReaction.UserId != _client.CurrentUser.Id)
+                {
+                    if (key[0] == "queue:")
+                    {
+                        await message.RemoveAllReactionsAsync(new RequestOptions());
+
+                        int p = int.Parse(key[3]);
+
+                        int forward = p + 10;
+                        int fTrackPos = forward - 9;
+                        int fTrackStart = forward - 9;
+
+                        int prev = p - 10;
+                        int pTrackPos = prev - 9;
+                        int pTrackStart = prev -9;
+
+                        if (sReaction.Emote.Name == "➡")
+                        {
+                            getQueueResults(player, textChannel, fTrackPos, fTrackStart, forward, message, false);
+                        }
+
+                        if (sReaction.Emote.Name == "⬅")
+                        {
+                            getQueueResults(player, textChannel, pTrackPos, pTrackStart, prev, message, false);
+                        }
+                    }
+                }
+            }
         }
 
         public async Task<Embed> ConnectAsync(SocketVoiceChannel voiceChannel, ITextChannel channel)
@@ -247,18 +291,18 @@ namespace Melody.Services
             }
         }
 
-        public async Task<Embed> QueueAsync(ulong guildId)
+        public async Task QueueAsync(ulong guildId, ITextChannel textChannel)
         {
 
             var descriptionBuilder = new StringBuilder();
             var player = _lavaSocketClient.GetPlayer(guildId);
             var embed = new EmbedBuilder();
-            embed.WithTitle("Music Playlist!");
+            embed.WithTitle("queue:");
 
             if (player == null)
             {
                 embed.WithDescription("\n - Nothing in Queue");
-                return embed.Build();
+                await textChannel.SendMessageAsync(null, false, embed.Build());
             }
             else
             {
@@ -268,57 +312,76 @@ namespace Melody.Services
                     {
                         embed.WithDescription($"__Now Playing__:\n - [{player.CurrentTrack.Title}]({player.CurrentTrack.Uri}) - [{player.CurrentTrack.Length}]");
                         embed.WithFooter($"Nothing else in queue! current runtime = [{player.CurrentTrack.Length}]");
-                        return embed.Build();
+                        await textChannel.SendMessageAsync(null, false, embed.Build());
                     }
                     else
                     {
-                        var trackPos = 1;
-                        var h = 00;
-                        var m = 00;
-                        var s = 00;
-                        foreach (var tracks in player.Queue.Items)
-                        {
-                            LavaTrack track = (LavaTrack)tracks;
-                            descriptionBuilder.Append($"{trackPos}: [{track.Title}]({track.Uri}) - [{track.Length}]\n\n");
-
-                            h += track.Length.Hours;
-                            m += track.Length.Minutes;
-                            s += track.Length.Seconds;
-
-                            if (s >= 60)
-                            {
-                                m += 1;
-                                s = 0;
-                            }
-
-                            if (m >= 60)
-                            {
-                                h += 1;
-                                m = 0;
-                            }
-
-                            trackPos++;
-                            
-                        }
-
-                        var runtime = h + ":" + m + ":" + s;
-
-                        embed.WithTitle("Music Playlist!");
-                        embed.WithDescription($"__Now Playing__:\n - " +
-                            $"[{player.CurrentTrack.Title}]({player.CurrentTrack.Uri}) - " +
-                            $"[{player.CurrentTrack.Length}]" +
-                            $"\n\n:arrow_double_down: __Up Next__::arrow_double_down:" +
-                            $"\n\n{descriptionBuilder.ToString()}");
-                        embed.WithFooter($"{trackPos} Songs in queue! current runtime = [{runtime}]");
-                        return embed.Build();
+                        var message = await textChannel.SendMessageAsync(null, false, embed.Build());
+                        getQueueResults(player, textChannel, 1, 1, 10, message, false);
+                        //getQueueResults(player, 1, 1, 10, embed, false); /* page 1 */
+                        //getQueueResults(player, 11, 11, 20, embed, true); /* page 2 */
+                        //getQueueResults(player, 21, 21, 30, embed, true); /* page 3 */
+                        //getQueueResults(player, 31, 31, 40, embed, true); /* page 4 */
                     }
                 }
                 else
                 {
                     embed.WithDescription("Player is not playing anything!");
-                    return embed.Build();
+                    await textChannel.SendMessageAsync(null, false, embed.Build());
                 }
             }
+        }
+
+        private async void getQueueResults(LavaPlayer player, ITextChannel textChannel, int trackPos, int startPos, int end, IUserMessage message, bool page = false)
+        {
+            var result = new List<IQueueObject>();
+            var descriptionBuilder = new StringBuilder();
+            EmbedBuilder embed = new EmbedBuilder();
+
+            foreach (var tracks in player.Queue.Items.Skip(startPos-2))
+            {
+                result.Add(tracks);
+            }
+
+            foreach (var tracks in result)
+            {
+                LavaTrack track = (LavaTrack)tracks;
+
+                if (trackPos <= end)
+                {
+                    descriptionBuilder.Append($"{trackPos}: [{track.Title}]({track.Uri}) - [{track.Length}]\n\n");
+                    embed.WithTitle($"queue: {startPos} - {end}");
+                    trackPos++;
+                }
+            }
+
+            //Console.WriteLine(descriptionBuilder.ToString());
+            Console.WriteLine("=============================");
+            Console.WriteLine(trackPos);
+
+            embed.WithDescription($"__Now Playing__:\n - " +
+                $"[{player.CurrentTrack.Title}]({player.CurrentTrack.Uri}) - " +
+                $"[{player.CurrentTrack.Length}]" +
+                $"\n\n:arrow_double_down: __Up Next__::arrow_double_down:" +
+                $"\n\n{descriptionBuilder.ToString()}");
+
+
+            if (trackPos >= player.Queue.Count || trackPos > 11)
+            {
+                IEmote left = new Emoji("⬅");
+                await message.AddReactionAsync(left);
+            } 
+            
+            if (trackPos <= player.Queue.Count)
+            {
+                IEmote right = new Emoji("➡");
+                await message.AddReactionAsync(right);
+            }
+
+            embed.WithFooter($"{player.Queue.Count} Songs in queue!");
+            await message.ModifyAsync(m => {
+                m.Embed = embed.Build();
+            });
         }
 
         private async Task OnTrackFinished(LavaPlayer player, LavaTrack track, TrackEndReason reason)
