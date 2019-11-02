@@ -42,6 +42,12 @@ namespace Melody.Services
             ITextChannel textChannel = (ITextChannel) channel;
 
             var player = _lavaSocketClient.GetPlayer(textChannel.Guild.Id);
+
+            if (player == null)
+            {
+                return;
+            }
+
             foreach (Embed embed in message.Embeds)
             {
                 string[] key = embed.Title.Split(" ");
@@ -360,8 +366,7 @@ namespace Melody.Services
                 $"\n\n:arrow_double_down: __Up Next__::arrow_double_down:" +
                 $"\n\n{descriptionBuilder.ToString()}");
 
-
-            if (trackPos >= player.Queue.Count || trackPos > 11)
+            if (trackPos >= player.Queue.Count && trackPos > 11)
             {
                 IEmote left = new Emoji("⬅");
                 await message.AddReactionAsync(left);
