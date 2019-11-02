@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Melody.Services;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,7 +14,7 @@ namespace Melody.Commands
         {
             await Context.Channel.TriggerTypingAsync();
 
-            string[] args = Context.Message.Content.Split(" ");
+            string[] args = parameters.Split(" ");
             ulong userId = Context.Message.Author.Id;
 
             var textChannel = Context.Channel as ITextChannel;
@@ -21,29 +22,34 @@ namespace Melody.Commands
 
             var embed = new EmbedBuilder();
 
-            switch (args[1])
+            switch (args[0])
             {
                 case "create":
-                    if (args.Length == 3)
+                    if (args.Length == 2)
                     {
-                        embed.WithDescription($"Created playlist: {args[2]}");
+                        embed.WithDescription($"Created playlist: {args[1]}");
                         embed.AddField("Begin adding songs with command:", ".list add <playlist name> <song name>", false);
-                        await ReplyAsync(null, false, PlaylistService.CreatePlaylist(userId, args[2]));
+                        await ReplyAsync(null, false, PlaylistService.CreatePlaylist(userId, args[1]));
                         return;
                     }
                     embed.WithDescription(".list create <playlist name>");
                     await ReplyAsync(null, false, embed.Build());
                     return;
+                case "del":
+                    await ReplyAsync(null, false, PlaylistService.DeletePlaylist(userId, args[1]));
+                    return;
                 case "add":
                     if (args.Length > 3)
                     {
-                        var array = args.Where((item, index) => index >= 3).ToArray();
+                        var array = args.Where((item, index) => index >= 2).ToArray();
                         var name = string.Join(" ", array);
-                        await ReplyAsync(null, false, PlaylistService.AddSong(userId, args[2], name));
+                        await ReplyAsync(null, false, PlaylistService.AddSong(userId, args[1], name));
                         return;
                     }
                     embed.WithDescription(".list add <playlist name> <song name>");
                     await ReplyAsync(null, false, embed.Build());
+                    return;
+                case "rem":
                     return;
                 default:
                     await ReplyAsync("unknown sub-command");
