@@ -107,8 +107,15 @@ namespace Melody.Services
         internal static List<string> GetPlaylist(ulong userId, string playlist)
         {
             string json = File.ReadAllText(path + "/" + file);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary<ulong, Dictionary<string, List<string>>>>(json);
-            return dictionary[userId][playlist];
+            var dictionary = JsonConvert.DeserializeObject<Dictionary<ulong, Dictionary<string, List<List<string>>>>>(json);
+            var list = new List<string>();
+            
+            foreach (var i in dictionary[userId][playlist])
+            {
+                list.Add(i[2]);
+            }
+            
+            return list;
         }
     }
 }
