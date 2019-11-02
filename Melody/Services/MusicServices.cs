@@ -76,20 +76,16 @@ namespace Melody.Services
             }
         }
 
-        public async Task<Embed> ConnectAsync(SocketVoiceChannel voiceChannel, ITextChannel channel)
+        public async Task ConnectAsync(SocketVoiceChannel voiceChannel, ITextChannel channel)
         {
-            var embed = new EmbedBuilder();
-
             if (voiceChannel == null)
             {
-                embed.WithDescription("You are not connected to a voice channel!");
-                return embed.Build();
+                return;
             }
             else
             {
                 await _lavaSocketClient.ConnectAsync(voiceChannel, channel);
-                embed.WithDescription($"Now connected to: {voiceChannel.Name}");
-                return embed.Build();
+                return;
             }
         }
 

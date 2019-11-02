@@ -21,18 +21,21 @@ namespace Melody.Commands
         {
             string[] args = Context.Message.Content.Split(" ");
             ulong userId = Context.Message.Author.Id;
+            ulong guildId = Context.Guild.Id;
+            var embed = new EmbedBuilder();
 
             var user = Context.User as SocketGuildUser;
             var textChannel = Context.Channel as ITextChannel;
             if (user.VoiceChannel == null)
             {
                 await textChannel.TriggerTypingAsync();
-                await ReplyAsync(null, false, await _musicService.ConnectAsync(user.VoiceChannel, textChannel));
+                embed.WithDescription("You are not connected to a voice channel!");
+                await ReplyAsync(null, false, embed.Build());
             }
             else
             {
                 await textChannel.TriggerTypingAsync();
-                await ReplyAsync(null, false, await _musicService.ConnectAsync(user.VoiceChannel, textChannel));
+                await _musicService.ConnectAsync(user.VoiceChannel, textChannel);
 
                 await textChannel.TriggerTypingAsync();
                 await ReplyAsync(null, false, await _musicService.PlayAsync(query, Context.Guild.Id));
