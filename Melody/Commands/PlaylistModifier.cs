@@ -39,11 +39,11 @@ namespace Melody.Commands
                     await ReplyAsync(null, false, PlaylistService.DeletePlaylist(userId, args[1]));
                     return;
                 case "add":
-                    if (args.Length > 3)
+                    if (args.Length > 2)
                     {
                         var array = args.Where((item, index) => index >= 2).ToArray();
                         var name = string.Join(" ", array);
-                        await ReplyAsync(null, false, PlaylistService.AddSong(userId, args[1], name));
+                        await ReplyAsync(null, false, await PlaylistService.AddSongAsync(userId, args[1], name));
                         return;
                     }
                     embed.WithDescription(".list add <playlist name> <song name>");
