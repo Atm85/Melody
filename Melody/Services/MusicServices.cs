@@ -20,11 +20,14 @@ namespace Melody.Services
         private LavaSocketClient _lavaSocketClient;
         private LavaPlayer _player;
 
+        public static LavaRestClient lavaRestClient;
+
         public MusicService(DiscordSocketClient client, LavaRestClient lavaRestClient, LavaSocketClient lavaSocketClient)
         {
             _client = client;
             _lavaRestClient = lavaRestClient;
             _lavaSocketClient = lavaSocketClient;
+            MusicService.lavaRestClient = lavaRestClient;
         }
 
         public Task InitializeAsync()
@@ -382,6 +385,14 @@ namespace Melody.Services
             await message.ModifyAsync(m => {
                 m.Embed = embed.Build();
             });
+        }
+
+        public async Task<LavaTrack> GetTrack(string query, ulong guildId)
+        {
+            var player = _lavaSocketClient.GetPlayer(guildId);
+            var results = await _lavaRestClient.SearchYouTubeAsync(query);
+            var embed = new EmbedBuilder();
+            return results.Tracks.FirstOrDefault();
         }
 
         private async Task OnTrackFinished(LavaPlayer player, LavaTrack track, TrackEndReason reason)
