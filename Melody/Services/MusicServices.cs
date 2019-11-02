@@ -298,6 +298,7 @@ namespace Melody.Services
             var player = _lavaSocketClient.GetPlayer(guildId);
             var embed = new EmbedBuilder();
             embed.WithTitle("queue:");
+            embed.WithDescription("");
 
             if (player == null)
             {
@@ -318,10 +319,6 @@ namespace Melody.Services
                     {
                         var message = await textChannel.SendMessageAsync(null, false, embed.Build());
                         getQueueResults(player, textChannel, 1, 1, 10, message, false);
-                        //getQueueResults(player, 1, 1, 10, embed, false); /* page 1 */
-                        //getQueueResults(player, 11, 11, 20, embed, true); /* page 2 */
-                        //getQueueResults(player, 21, 21, 30, embed, true); /* page 3 */
-                        //getQueueResults(player, 31, 31, 40, embed, true); /* page 4 */
                     }
                 }
                 else
@@ -337,6 +334,12 @@ namespace Melody.Services
             var result = new List<IQueueObject>();
             var descriptionBuilder = new StringBuilder();
             EmbedBuilder embed = new EmbedBuilder();
+
+            embed.WithTitle($"queue: {startPos} - {end}");
+            embed.WithDescription($":arrows_counterclockwise: Loading {player.Queue.Count} queue results! May take some time...");
+            await message.ModifyAsync(m => {
+                m.Embed = embed.Build();
+            });
 
             foreach (var tracks in player.Queue.Items.Skip(startPos-2))
             {
@@ -354,10 +357,6 @@ namespace Melody.Services
                     trackPos++;
                 }
             }
-
-            //Console.WriteLine(descriptionBuilder.ToString());
-            Console.WriteLine("=============================");
-            Console.WriteLine(trackPos);
 
             embed.WithDescription($"__Now Playing__:\n - " +
                 $"[{player.CurrentTrack.Title}]({player.CurrentTrack.Uri}) - " +
