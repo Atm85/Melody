@@ -163,16 +163,21 @@ namespace Melody.Services
                 {
                     SearchResult results = await _lavaRestClient.SearchYouTubeAsync(tracks);
                     LavaTrack track = results.Tracks.FirstOrDefault();
-                    descriptionBuilder.Append($"{trackPos}: [{track.Title}]({track.Uri}) - [{track.Length}]\n\n");
+                    if (trackPos <= 10)
+                    {
+                        descriptionBuilder.Append($"{trackPos}: [{track.Title}]({track.Uri}) - [{track.Length}]\n\n");
+
+                        embed.WithDescription($"1: [{track1.Title}]({track1.Uri}) - [{track1.Length}]\n\n{descriptionBuilder.ToString()}");
+                        trackPos++;
+                    } else
+                    {
+                        embed.WithFooter($"+ {query.Count - 10} more tracks!");
+                    }
                     player.Queue.Enqueue(track);
-
-                    embed.WithDescription($"1: [{track1.Title}]({track1.Uri}) - [{track1.Length}]\n\n{descriptionBuilder.ToString()}");
-                    await message.ModifyAsync(m => {
-                        m.Embed = embed.Build();
-                    });
-
-                    trackPos++;
                 }
+                await message.ModifyAsync(m => {
+                    m.Embed = embed.Build();
+                });
             } 
             else
             {
