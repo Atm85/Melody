@@ -189,7 +189,7 @@ namespace Melody.Services
                         trackPos++;
                     } else
                     {
-                        embed.WithFooter($"+ {query.Count - 10} more tracks!");
+                        embed.WithFooter($"+ {query.Count - 10} more track(s)!");
                     }
                     player.Queue.Enqueue(track);
                 }
@@ -207,16 +207,23 @@ namespace Melody.Services
                 {
                     SearchResult results = await _lavaRestClient.SearchYouTubeAsync(tracks);
                     LavaTrack track = results.Tracks.FirstOrDefault();
-                    descriptionBuilder.Append($"{trackPos}: [{track.Title}]({track.Uri}) - [{track.Length}]\n\n");
+                    if (trackPos <= 10)
+                    {
+                        descriptionBuilder.Append($"{trackPos}: [{track.Title}]({track.Uri}) - [{track.Length}]\n\n");
+
+                        embed.WithDescription($"{descriptionBuilder.ToString()}");
+                        trackPos++;
+                    }
+                    else
+                    {
+                        embed.WithFooter($"+ {query.Count - 10} more track(s)!");
+                    }
                     player.Queue.Enqueue(track);
-
-                    embed.WithDescription($"{descriptionBuilder.ToString()}");
-                    await message.ModifyAsync(m => {
-                        m.Embed = embed.Build();
-                    });
-
-                    trackPos++;
                 }
+                embed.WithDescription($"{descriptionBuilder.ToString()}");
+                await message.ModifyAsync(m => {
+                    m.Embed = embed.Build();
+                });
             }
         }
         public async Task<Embed> StopAsync(ulong guildId)
