@@ -42,7 +42,8 @@ namespace Melody.Services
         private async Task OnReactionAdd(Cacheable<IUserMessage, ulong> cache, ISocketMessageChannel channel, SocketReaction sReaction)
         {
             IUserMessage message = await cache.GetOrDownloadAsync();
-            ITextChannel textChannel = (ITextChannel) channel;
+            ITextChannel textChannel = (ITextChannel)channel;
+            SocketGuildUser user = (SocketGuildUser)message.Author;
 
             var player = _lavaSocketClient.GetPlayer(textChannel.Guild.Id);
 
@@ -80,6 +81,23 @@ namespace Melody.Services
                         {
                             getQueueResults(player, textChannel, pTrackPos, pTrackStart, prev, message, false);
                         }
+                        return;
+                    }
+
+                    if (key[0] == "Skipping!")
+                    {
+                        if (sReaction.Emote.Name == "☑")
+                        {
+                            Console.WriteLine(message.Reactions.Count);
+                            Console.WriteLine(user.VoiceChannel.Users.Count - 1);
+                            float count = (user.VoiceChannel.Users.Count - 1) / 2;
+                            if (message.Reactions.Count > count)
+                            {
+                                await channel.SendMessageAsync(null, false, await SkipAsync(textChannel.Guild.Id));
+                                await message.RemoveAllReactionsAsync(new RequestOptions());
+                            }
+                        }
+                        return;
                     }
                 }
             }
